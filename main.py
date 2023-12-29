@@ -1,5 +1,7 @@
 import numpy as np
 
+from scipy.constants import pi
+
 # 積分条件
 number_of_divisions = 10000
 integral_start_value = 0 
@@ -19,4 +21,5 @@ amount_of_absorption = np.trapz(absorption_rate(wave_length) * absorption_intens
 
 if __name__ == '__main__':
     print('積分計算結果: ', amount_of_absorption)
+    print('πの値: ', pi)
     print('PyCharm')
