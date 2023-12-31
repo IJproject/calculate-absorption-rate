@@ -4,7 +4,7 @@ from scipy.constants import pi, c, h, k
 from data_list import data_list
 
 whole_energy = 390.1046951106533 #全輻射エネルギー
-dir_path = '/absorption-spectrum-data/' #吸収スペクトルデータのディレクトリ
+dir_path = 'absorption-spectrum-data/' #吸収スペクトルデータのディレクトリ
 
 def calculate(data):
 
@@ -14,13 +14,24 @@ def calculate(data):
 
     #ファイルの読み込み
     material = data['material']
-    # vertical_devisions = data['vertical_devisions']
-    # file_name = material + '.txt'
-    # with open(dir_path + file_name, 'r') as file:
-    #     print("ファイル読み込み")
+    vertical_devisions = data['vertical_devisions']
+    horizontal_devisions = data['horizontal_devisions']
+
+    tmp_absorption_rate_array = [0 for _ in range(horizontal_devisions)]
+
+    file_name = material + '.txt'
+    with open(dir_path + file_name, 'r') as file:
+        for line in file:
+            numbers = line.split()
+            for number_index, number in enumerate(numbers):
+                if(number == '0'):
+                    tmp_absorption_rate_array[number_index] += 1
+                    continue
+
+    absorption_rate_array = [x / vertical_devisions for x in tmp_absorption_rate_array]
 
     # 積分条件
-    number_of_divisions = 10000 #分割数
+    number_of_divisions = horizontal_devisions #分割数
     lambda_start = 1 * 10 ** (-6) #積分範囲の下限
     lambda_finish = 2 * 10 ** (-5) #積分範囲の上限
 
@@ -32,7 +43,7 @@ def calculate(data):
     amount_of_absorption = 0
     for i in range(number_of_divisions - 1):
         # 各微小領域の面積を計算して合計する
-        amount_of_absorption += pi * (absorption_intensity(wave_length[i]) + absorption_intensity(wave_length[i+1])) / 2 * dx
+        amount_of_absorption += absorption_rate_array[i] * pi * (absorption_intensity(wave_length[i]) + absorption_intensity(wave_length[i+1])) / 2 * dx
 
     amount_of_absorption_rate = amount_of_absorption / whole_energy * 100
 
