@@ -24,7 +24,7 @@ def calculate(data):
         for line in file:
             numbers = line.split()
             for number_index, number in enumerate(numbers):
-                if(number == '0'):
+                if(int(number) <= 45): #45以下が吸収、46以上は透過
                     tmp_absorption_rate_array[number_index] += 1
                     continue
 
